@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {[{template "headerbody2" .}]}
+    {[{template "adminheader" .}]}
+
+    <link rel="stylesheet" href="./../static/editor.md/css/editormd.min.css"/>
+</head>
+<body>
+<div>
+
+    {[{template "header" .}]}
+
+
+    <div id="app" class="container grid-lg indexcontent" style="padding-bottom: 40px">
+
+        <div class="columns">
+            <div class="column col-12 col-md-12 col-sm-12  col-xs-12">
+
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="input-title">标题</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="text" id="input-title" v-model="blog.title">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="input-urltitle">网址标题(生于在url中访问)</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="text" id="input-urltitle" placeholder="比如:my-first-blog"
+                                   v-model="blog.urltitle">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+
+                        <label class="form-label" for="input-content">博文内容</label>
+                        <div id="editor">
+                            <!-- Tips: Editor.md can auto append a `<textarea>` tag -->
+                            <textarea style="display:none;" v-model="blog.content">### Hello Editor.md !</textarea>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="input-author">作者</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="text" id="input-author">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="input-publishtime">发表时间</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="text" id="input-publishtime">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="input-source">来源</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="text" id="input-source">
+                        </div>
+                    </div>
+
+                    <div style="text-align: right">
+                        <input type="button" value="返回" class="btn btn-default">
+                        <input type="button" value="保存" class="btn btn-primary" @click="Save">
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+
+<script src="./../static/jquery.min.js"></script>
+<script src="./../static/editor.md/editormd.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var editor = editormd("editor", {
+            // width: "100%",
+            height: "400px",
+            // markdown: "xxxx",     // dynamic set Markdown text
+            path: "./../static/editor.md/lib/"  // Autoload modules mode, codemirror, marked... dependents libs path
+        });
+    });
+</script>
+
+
+<script>
+    // 创建 Vue 实例，得到 ViewModel
+    var vm = new Vue({
+        el: '#app',
+        data() {
+            return {
+                blog: {
+                    blogid: 0,
+                    title: "",
+                    urltitle: "",
+                    content: ""
+                },
+                message: ""
+            }
+        },
+        mounted() {
+            this.Load();
+        },
+        methods: {
+            //获取文章
+            Load: function () {
+                var that = this;
+                //发送get请求
+                axios.get('../api/v1/blog').then(function (res) {
+                    if (res.data) {
+                        if (res.data.status == 200) {
+                            that.captchaId = res.data.data.captchaId;
+                            that.checkcode = res.data.data.data;
+                        } else {
+
+                        }
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
+            },
+            //保存
+            Save: function () {
+
+                this.errormsg = "";
+                var that = this;
+
+                if (this.blog == "") {
+                    this.message = "请填写博文标题";
+                    return;
+                }
+
+                //发送get请求
+                axios.post('../api/v1/blog', this.blog).then(function (res) {
+                    if (res.data) {
+                        if (res.data.status == 200) {
+                            that.blog.blogid = res.data.data.blogid;
+                        } else {
+                            that.GetCheckcode();
+                            that.message = res.data.message;
+                        }
+                    }
+
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

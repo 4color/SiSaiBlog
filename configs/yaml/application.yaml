@@ -1,0 +1,8 @@
+application:
+  mode: debug #gin的启动模式， debug or release or test
+  server:
+    port: 8080
+    name: skdp-admin-service
+  #数据库连接
+  db:
+    ConnectionString: ./cmd/sisaiblog.db

@@ -1,0 +1,50 @@
+.navbar-brand {
+    font-size: 20px;
+}
+
+.navbar {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.footer {
+    padding-top: 30px;
+    font-size: 12px;
+}
+
+/*列表页*/
+.list .title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.list .content {
+    padding-top: 10px;
+    font-size: 14px;
+}
+
+.list .info {
+    padding-top: 10px;
+    font-size: 12px;
+    color: gray;
+
+}
+
+.list .article_info {
+    display: inline;
+    clear: both;
+}
+
+.list .icon-icon-list {
+    padding-left: 20px;
+    display: inline;
+    clear: both;
+    float: right;
+
+}
+
+.indexcontent {
+    min-height: 450px;
+}
+
+/*列表页结束*/
