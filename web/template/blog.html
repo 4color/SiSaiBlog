@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <link rel="stylesheet" href="./../static/editor.md/css/editormd.min.css"/>
+    
+    {[{template "headerbody2" .}]}
+    <meta name="keywords" content="{[{ .blog.Tags }]}">
+    <meta name="description" content="{[{ .blog.Intro }]}">
+
+
+</head>
+<body>
+<div>
+
+    {[{template "header" .}]}
+
+    <div class="container grid-lg indexcontent">
+
+        <div class="columns">
+            <div class="column col-12">
+                <div class="list">
+
+
+                    <div class="title">
+                        {[{ .blog.Title }]}
+                    </div>
+
+                    <div class="info">
+                        <div class="article_info"><span class="autor_name"> {[{ .blog.Author }]}</span> <span
+                                    class="time">发布于 {[{ .Publishtime }]}</span>
+                        </div>
+                        <div class="icon-icon-list"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;{[{ .blog.Views}]}
+                            &nbsp;&nbsp;
+                            <i class="fa fa-comments" aria-hidden="true"></i>&nbsp;{[{ .blog.Comments }]}
+                        </div>
+                    </div>
+
+                    <div id="content">
+                        <!-- Server-side output Markdown text -->
+                        <textarea style="display:none;">{[{ .blog.Content }]}</textarea>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    {[{template "footer" .}]}
+</div>
+
+<script src="./../static/jquery.min.js"></script>
+<script src="./../static/editor.md/editormd.min.js"></script>
+<script src="./../static/editor.md/lib/marked.min.js"></script>
+<script src="./../static/editor.md/lib/prettify.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var testView = editormd.markdownToHTML("content", {
+            // markdown : "[TOC]\n### Hello world!\n## Heading 2", // Also, you can dynamic set Markdown text
+            // htmlDecode : true,  // Enable / disable HTML tag encode.
+            // htmlDecode : "style,script,iframe",  // Note: If enabled, you should filter some dangerous HTML tags for website security.
+        });
+    });
+</script>
+</body>
+</html>

@@ -26,6 +26,8 @@ func InitRouter() {
 	R.LoadHTMLGlob("web/template/**")
 
 	R.GET("/", views.Index)
+	R.GET("/viewblog/:blogid", views.Viewblog)
+
 	R.GET("/admin", views.Admin)
 
 	R.GET("/login", views.Login)
@@ -51,7 +53,12 @@ func InitRouter() {
 		v1.POST("/blogsetting", apisetting.SaveSettingInfo)
 
 		//博客
-		v1.POST("/blog", blog.EditBlog)
+		v1.GET("/blog/:blogid", blog.EditBlog)
+		v1.POST("/blog", blog.SaveBlog)
+
+		v1.GET("/bloglist", blog.BlogList)
+		v1.GET("/blogs/count", blog.BlogListCount)
+		v1.POST("/blogs/delete", blog.BlogDelete)
 
 	}
 }

@@ -11,25 +11,35 @@
     <div class="container grid-lg indexcontent">
 
         <div class="columns">
-            <div class="column col-9 col-md-12">
+            <div class="column col-12">
                 <div class="list">
+
+                    {[{ range .blogs }]}
                     <div class="title">
-                        策略实例【入门篇】：4.布林强盗突破策略
+                       <a href="viewblog/{[{ .Blogid }]}"> {[{ .Title }]}</a>
                     </div>
                     <div class="content">
-                        布林强盗突破策略 如果收盘价上穿布林上轨时，则买入； 如果收盘价下穿布林中轨时，则卖出。 MB中轨：N日的简单移动平均 UP上轨：中轨 + k倍N日标准差 DN下轨：中轨 -
-                        k倍N日标准差
+                        {[{ .Intro }]}
                     </div>
                     <div class="info">
-                        <div class="article_info"><span class="autor_name">起来搬砖咯</span> <span class="time">发布于 2019-10-24 11:39:49</span>
+                        <div class="article_info"><span class="autor_name"> {[{ .Author }]}</span> <span class="time">发布于 {[{ .Publishtime }]}</span>
                         </div>
-                        <div class="icon-icon-list"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;418 &nbsp;&nbsp;
-                            <i class="fa fa-comments" aria-hidden="true"></i>&nbsp;8
+                        <div class="icon-icon-list"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;{[{ .Views }]}
+                            &nbsp;&nbsp;
+                            <i class="fa fa-comments" aria-hidden="true"></i>&nbsp;{[{ .Comments }]}
                         </div>
                     </div>
+                    {[{end}]}
+                </div>
+
+                <div class="pager">
+                    <div class="pageleft"><span class="label label-rounded label-primary"><a
+                                    href="?p={[{.preindex}]}">上一页</a></span></div>
+                    <div class="pageright"><span class="label label-rounded label-primary"><a
+                                    href="?p={[{.nextindex}]}">下一页</a></span></div>
                 </div>
             </div>
-            <div class="column col-3  col-md-1">col-xs-3</div>
+
         </div>
     </div>
 

@@ -4,6 +4,7 @@ import (
 	"github.com/4color/SiSaiBlog/api"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 func Admin(gc *gin.Context) {
@@ -19,8 +20,11 @@ func AdminBlog(gc *gin.Context) {
 }
 
 func AdminNew(gc *gin.Context) {
+
+	blogid := gc.DefaultQuery("blogid","0")
+	iblogid, _ := strconv.Atoi(blogid)
 	gc.HTML(http.StatusOK, "editblog.html", gin.H{
-		"title": "Posts",
+		"blogid": iblogid,
 	})
 }
 

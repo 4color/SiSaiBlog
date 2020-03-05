@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="./../static/editor.md/css/editormd.min.css"/>
 </head>
 <body>
-<div>
+<div id="app">
 
     {[{template "header" .}]}
 
 
-    <div id="app" class="container grid-lg indexcontent" style="padding-bottom: 40px">
+    <div class="container grid-lg indexcontent" style="padding-bottom: 40px">
 
         <div class="columns">
             <div class="column col-12 col-md-12 col-sm-12  col-xs-12">
@@ -38,22 +38,20 @@
                     </div>
 
                     <div class="form-group">
-
-
-                        <label class="form-label" for="input-content">博文内容</label>
-                        <div id="editor">
-                            <!-- Tips: Editor.md can auto append a `<textarea>` tag -->
-                            <textarea style="display:none;" v-model="blog.content">### Hello Editor.md !</textarea>
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="input-tags">标签(多个以单引号隔开)</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="text" id="input-tags" v-model="blog.tags">
                         </div>
                     </div>
-
 
                     <div class="form-group">
                         <div class="col-3 col-sm-12">
                             <label class="form-label" for="input-author">作者</label>
                         </div>
                         <div class="col-9 col-sm-12">
-                            <input class="form-input" type="text" id="input-author">
+                            <input class="form-input" type="text" id="input-author" v-model="blog.author">
                         </div>
                     </div>
 
@@ -62,7 +60,7 @@
                             <label class="form-label" for="input-publishtime">发表时间</label>
                         </div>
                         <div class="col-9 col-sm-12">
-                            <input class="form-input" type="text" id="input-publishtime">
+                            <input class="form-input" type="text" id="input-publishtime" v-model="blog.publishtime">
                         </div>
                     </div>
 
@@ -71,12 +69,34 @@
                             <label class="form-label" for="input-source">来源</label>
                         </div>
                         <div class="col-9 col-sm-12">
-                            <input class="form-input" type="text" id="input-source">
+                            <input class="form-input" type="text" id="input-source" v-model="blog.source">
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="input-intro">简介</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <textarea class="form-input" type="text" id="input-intro" v-model="blog.intro"
+                                      rows="4"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+
+                        <label class="form-label" for="input-content">博文内容</label>
+                        <div id="editor">
+                            <!-- Tips: Editor.md can auto append a `<textarea>` tag -->
+                            <textarea style="display:none;" id="input-content" v-model="blog.content">### Hello Editor.md !</textarea>
+                        </div>
+                    </div>
+
+
                     <div style="text-align: right">
-                        <input type="button" value="返回" class="btn btn-default">
+                        <input type="button" value="返回" class="btn btn-default"
+                               onclick="window.location.href='../adminblog'">
                         <input type="button" value="保存" class="btn btn-primary" @click="Save">
                     </div>
 
@@ -84,9 +104,26 @@
             </div>
 
         </div>
+
     </div>
 
+    <div class="modal active modal-sm" id="modal-id" v-if="message.length>0">
+        <a href="#close" class="modal-overlay" aria-label="Close" @click="Clear()"></a>
+        <div class="modal-container">
+            <div class="modal-header">
+                <a href="#close" class="btn btn-clear float-right" aria-label="Close" @click="Clear()"></a>
+                <div class="modal-title h5">消息提示</div>
+            </div>
+            <div class="modal-body">
+                <div class="content">
+                    {{message}}
+                </div>
+            </div>
+            <div class="modal-footer">
 
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -111,29 +148,38 @@
         data() {
             return {
                 blog: {
-                    blogid: 0,
+                    blogid: {[{.blogid}]},
                     title: "",
                     urltitle: "",
-                    content: ""
+                    content: "",
+                    author: "",
+                    source: "",
+                    publishtime: this.GetDate(),
+                    tags: "",
+                    intro: ""
                 },
                 message: ""
             }
         },
         mounted() {
+
             this.Load();
         },
         methods: {
             //获取文章
             Load: function () {
+
+                if (this.blog.blogid == 0) {
+                    return
+                }
                 var that = this;
                 //发送get请求
-                axios.get('../api/v1/blog').then(function (res) {
+                axios.get('../api/v1/blog/' + this.blog.blogid).then(function (res) {
                     if (res.data) {
                         if (res.data.status == 200) {
-                            that.captchaId = res.data.data.captchaId;
-                            that.checkcode = res.data.data.data;
+                            that.blog = res.data.data;
                         } else {
-
+                            that.message = res.data.message;
                         }
                     }
                 }).catch(function (error) {
@@ -146,9 +192,14 @@
 
                 this.errormsg = "";
                 var that = this;
-
-                if (this.blog == "") {
+                this.blog.content = document.getElementById("input-content").value;
+                if (this.blog.title == "") {
                     this.message = "请填写博文标题";
+                    return;
+                }
+
+                if (this.blog.content == "") {
+                    this.message = "请填写博文内容";
                     return;
                 }
 
@@ -157,15 +208,33 @@
                     if (res.data) {
                         if (res.data.status == 200) {
                             that.blog.blogid = res.data.data.blogid;
+                            that.message = res.data.message;
                         } else {
-                            that.GetCheckcode();
                             that.message = res.data.message;
                         }
                     }
-
                 }).catch(function (error) {
                     console.log(error);
                 });
+            },
+            Clear: function () {
+                this.message = ""
+            },
+            GetDate: function () {
+                var nowtime = new Date();
+                var year = nowtime.getFullYear();
+                var month = this.Padleft0(nowtime.getMonth() + 1);
+                var day = this.Padleft0(nowtime.getDate());
+                var hour = this.Padleft0(nowtime.getHours());
+                var minute = this.Padleft0(nowtime.getMinutes());
+                var second = this.Padleft0(nowtime.getSeconds());
+                var millisecond = nowtime.getMilliseconds();
+                millisecond = millisecond.toString().length == 1 ? "00" + millisecond : millisecond.toString().length == 2 ? "0" + millisecond : millisecond;
+                return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+
+            },
+            Padleft0: function (obj) {
+                return obj.toString().replace(/^[0-9]{1}$/, "0" + obj);
 
             }
         }

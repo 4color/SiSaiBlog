@@ -27,6 +27,7 @@
     padding-top: 10px;
     font-size: 12px;
     color: gray;
+    padding-bottom: 40px;
 
 }
 
@@ -48,3 +49,36 @@
 }
 
 /*列表页结束*/
+
+.table td {
+    padding: 5px !important;
+}
+
+.table th {
+    padding: 5px !important;
+}
+
+.zpagenav ui {
+    margin: 5px !important;
+    padding-top: 10px;
+}
+
+.pager a, .pagera:visited, .pager a:hover, .pager a:active {
+    color: white !important;
+}
+
+.pageleft {
+    padding-left: 200px;
+    display: inline;
+    clear: both;
+}
+
+.pageright {
+    clear: both;
+    float: right;
+    padding-right: 200px;
+}
+
+.editormd-html-preview, .editormd-preview-container {
+    padding: 0px !important;
+}
