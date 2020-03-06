@@ -32,3 +32,11 @@ windows下编译生成exe程序，linux下编译生成二进制运行包
 ### 配置修改
 找到文件：configs\yaml\application.yaml
 
+## 官方站点
+http://4color.cn
+
+## Github
+https://github.com/4color/SiSaiBlog/
+欢迎Follow
+
+
