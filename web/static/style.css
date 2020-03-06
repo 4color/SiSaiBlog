@@ -68,7 +68,7 @@
 }
 
 .pageleft {
-    padding-left: 200px;
+    padding-left: 50px;
     display: inline;
     clear: both;
 }
@@ -76,7 +76,7 @@
 .pageright {
     clear: both;
     float: right;
-    padding-right: 200px;
+    padding-right: 50px;
 }
 
 .editormd-html-preview, .editormd-preview-container {
