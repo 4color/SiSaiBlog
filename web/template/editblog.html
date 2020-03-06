@@ -151,7 +151,7 @@
                     title: "",
                     urltitle: "",
                     content: "",
-                    author: "",
+                    author:  {[{ .blogset.Author}]},
                     source: "",
                     publishtime: this.GetDate(),
                     tags: "",
@@ -202,7 +202,7 @@
                     return;
                 }
                 //替换空白
-                this.blog.urltitle = this.blog.urltitle.replace(" " / g, "-");
+                this.blog.urltitle = this.blog.urltitle.replace(new RegExp(/( )/g),"-")
                 //发送get请求
                 axios.post('../api/v1/blog', this.blog).then(function (res) {
                     if (res.data) {
