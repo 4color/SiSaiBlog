@@ -82,3 +82,7 @@
 .editormd-html-preview, .editormd-preview-container {
     padding: 0px !important;
 }
+
+.navbar .navbar-brand {
+    font-size: 30px !important;
+}

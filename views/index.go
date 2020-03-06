@@ -1,10 +1,12 @@
 package views
 
 import (
+	"github.com/4color/SiSaiBlog/cmd"
 	"github.com/4color/SiSaiBlog/cmd/db"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 func Index(gc *gin.Context) {
@@ -30,12 +32,26 @@ func Index(gc *gin.Context) {
 		"blogs":     bloginfo,
 		"preindex":  preindex,
 		"nextindex": nextindex,
+		"blogset":   cmd.GlobalBlogSeting,
 	})
 }
 
 //查看博客
 func Viewblog(gc *gin.Context) {
-	blogid := gc.Param("blogid")
+	//blogid := gc.Param("blogid")
+
+	url := gc.Request.RequestURI
+	url = strings.Replace(url, "/view/", "", -1);
+	println(url)
+
+	blogid := "0"
+	if (strings.Contains(url, "-")) {
+		ids := strings.Split(url, "-")
+		blogid = ids[0]
+	} else {
+		blogid = url
+	}
+
 	//获取表信息
 	blog := db.TBlog{}
 
@@ -43,10 +59,13 @@ func Viewblog(gc *gin.Context) {
 	if err != nil {
 		gc.HTML(http.StatusOK, "error.html", gin.H{
 			"errormsg": err.Error(),
+			"blogset":  cmd.GlobalBlogSeting,
 		})
 	} else {
 		gc.HTML(http.StatusOK, "blog.html", gin.H{
-			"blog": bloginfo,
+			"blog":    bloginfo,
+			"blogset": cmd.GlobalBlogSeting,
+			"test":    `<script>alert(1)</script>`,
 		})
 	}
 }

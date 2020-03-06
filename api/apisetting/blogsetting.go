@@ -2,6 +2,7 @@ package apisetting
 
 import (
 	"github.com/4color/SiSaiBlog/api"
+	"github.com/4color/SiSaiBlog/cmd"
 	"github.com/4color/SiSaiBlog/cmd/db"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -17,6 +18,7 @@ func GetSettingInfo(gc *gin.Context) {
 	if err != nil {
 		res.Message = err.Error()
 		gc.JSON(http.StatusOK, res)
+		gc.Abort()
 		return
 	}
 
@@ -43,6 +45,8 @@ func SaveSettingInfo(gc *gin.Context) {
 		return
 	}
 
+	//更新缓存
+	cmd.InitCache()
 	//返回值
 	res.Data = bloginfo
 	res.Message = "保存成功"

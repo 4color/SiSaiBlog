@@ -23,8 +23,40 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="form-label" for="input-blogtitle">副标题</label>
+                        <input class="form-input" type="text" id="input-blogtitle" v-model="seting.blogtitle">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="input-author">默认作者</label>
+                        <input class="form-input" type="text" id="input-author" v-model="seting.author">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="input-beian">网站备案号</label>
+                        <input class="form-input" type="text" id="input-beian" v-model="seting.beian">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="input-keywords">网站关键词</label>
+                        <input class="form-input" type="text" id="input-keywords" v-model="seting.keywords">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="input-description">网站描述</label>
+                        <input class="form-input" type="text" id="input-description" v-model="seting.description">
+                    </div>
+
+                    <div class="form-group">
                         <label class="form-label" for="input-github">Github</label>
                         <input class="form-input" type="text" id="input-github" v-model="seting.github">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="input-commentcode">评论配置: appid|conf
+                            例:cyuIOoDgG|prod_c067658bcd27bed4c257adddca501157 <a href="https://changyan.kuaizhan.com/"
+                                                                                 target="_blank">申请</a></label>
+                        <input class="form-input" type="text" id="input-commentcode" v-model="seting.commentcode">
                     </div>
 
                     <div class="form-group">
@@ -65,7 +97,13 @@
                     systemid: 0,
                     blogname: "",
                     github: "",
-                    counter: ""
+                    counter: "",
+                    author: "",
+                    beian: "",
+                    description: "",
+                    keywords: "",
+                    blogtitle: "",
+                    commentcode: ""
                 },
                 errormsg: "",
                 message: ""

@@ -30,7 +30,7 @@
                     <tbody>
                     <tr v-for="(item,index) in blogs" :class="{active:index%2==0,off:index%2!=0}">
                         <td>{{(pager.page-1)*pager.pageSize+index+1}}</td>
-                        <td><a :href="'../viewblog/'+item.blogid" target="_blank">{{item.title}}</a></td>
+                        <td><a :href="'../view/'+item.blogid" target="_blank">{{item.title}}</a></td>
                         <td style="width: 150px">{{item.publishtime}}</td>
                         <td style="width: 150px">
                             <button class="btn btn-link" @click="Edit(item.blogid)">编辑</button>

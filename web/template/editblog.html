@@ -28,13 +28,13 @@
                     </div>
 
                     <div class="form-group">
-                        <div class="col-3 col-sm-12">
-                            <label class="form-label" for="input-urltitle">网址标题(生于在url中访问)</label>
-                        </div>
-                        <div class="col-9 col-sm-12">
-                            <input class="form-input" type="text" id="input-urltitle" placeholder="比如:my-first-blog"
-                                   v-model="blog.urltitle">
-                        </div>
+                        
+                        <label class="form-label" for="input-urltitle">标题网址(生于在url中访问，比如
+                            http://www.baidu.com/my-computer-is-beautiful)</label>
+
+                        <input class="form-input" type="text" id="input-urltitle" placeholder="比如:my-first-blog"
+                               v-model="blog.urltitle">
+
                     </div>
 
                     <div class="form-group">
@@ -83,6 +83,11 @@
                         </div>
                     </div>
 
+                    <div style="text-align: right">
+                        <input type="button" value="返回" class="btn btn-default"
+                               onclick="window.location.href='../adminblog'">
+                        <input type="button" value="保存" class="btn btn-primary" @click="Save">
+                    </div>
                     <div class="form-group">
 
 
@@ -93,12 +98,6 @@
                         </div>
                     </div>
 
-
-                    <div style="text-align: right">
-                        <input type="button" value="返回" class="btn btn-default"
-                               onclick="window.location.href='../adminblog'">
-                        <input type="button" value="保存" class="btn btn-primary" @click="Save">
-                    </div>
 
                 </form>
             </div>
@@ -133,7 +132,7 @@
     $(function () {
         var editor = editormd("editor", {
             // width: "100%",
-            height: "400px",
+            height: "600px",
             // markdown: "xxxx",     // dynamic set Markdown text
             path: "./../static/editor.md/lib/"  // Autoload modules mode, codemirror, marked... dependents libs path
         });
@@ -202,7 +201,8 @@
                     this.message = "请填写博文内容";
                     return;
                 }
-
+                //替换空白
+                this.blog.urltitle = this.blog.urltitle.replace(" " / g, "-");
                 //发送get请求
                 axios.post('../api/v1/blog', this.blog).then(function (res) {
                     if (res.data) {

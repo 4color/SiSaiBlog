@@ -7,7 +7,7 @@ import (
 )
 
 type TBlog struct {
-	Blogid      int64    `json:"blogid" form:"blogid"`
+	Blogid      int64  `json:"blogid" form:"blogid"`
 	Title       string `json:"title" form:"title"`
 	Content     string `json:"content" form:"content"`
 	Publishtime string `json:"publishtime" form:"publishtime"`
@@ -54,11 +54,11 @@ func (p *TBlog) Save(data TBlog) (set TBlog, err1 error) {
 	return
 }
 
-//保存
+//读取一条
 func (p *TBlog) ReadOne(blogid string) (set TBlog, err error) {
 
-	row := SqlDB.QueryRow("SELECT blogid,title,content,publishtime,urltitle,author,source,tags,intro FROM t_blogs where blogid=:1", blogid)
-	err = row.Scan(&set.Blogid, &set.Title, &set.Content, &set.Publishtime, &set.Urltitle, &set.Author, &set.Source, &set.Tags, &set.Intro)
+	row := SqlDB.QueryRow("SELECT blogid,title,content,publishtime,urltitle,author,source,tags,intro,views FROM t_blogs where blogid=:1", blogid)
+	err = row.Scan(&set.Blogid, &set.Title, &set.Content, &set.Publishtime, &set.Urltitle, &set.Author, &set.Source, &set.Tags, &set.Intro, &set.Views)
 
 	//如果包含了无行数据的消息，则不为错误
 	if (err != nil && strings.Contains(err.Error(), "no rows in result set")) {
@@ -117,5 +117,16 @@ func (p *TBlog) BlogDelete(blogid string) (blogs int, err error) {
 		return
 	}
 
+	return
+}
+
+//更新查看数
+func (p *TBlog) UpdateView(blogid string) (err1 error) {
+
+	_, err := SqlDB.Exec("update t_blogs set views=views+1 where blogid=:1",
+		blogid)
+	if err != nil {
+		err1 = err
+	}
 	return
 }

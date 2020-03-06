@@ -126,3 +126,23 @@ func BlogDelete(gc *gin.Context) {
 	res.Status = http.StatusOK
 	gc.JSON(200, res)
 }
+
+//编辑单篇博客
+func BlogUpdateViews(gc *gin.Context) {
+	res := api.ResponseBodyModel{http.StatusInternalServerError, "", ""}
+
+	blogid := gc.DefaultQuery("blogid", "0")
+	//获取表信息
+	blog := db.TBlog{}
+
+	err := blog.UpdateView(blogid)
+	if err != nil {
+		res.Message = err.Error()
+		gc.JSON(http.StatusOK, res)
+		return
+	}
+
+	res.Message = "获取成功"
+	res.Status = http.StatusOK
+	gc.JSON(200, res)
+}
