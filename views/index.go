@@ -33,6 +33,7 @@ func Index(gc *gin.Context) {
 		"preindex":  preindex,
 		"nextindex": nextindex,
 		"blogset":   cmd.GlobalBlogSeting,
+		"navset":    cmd.GlobalNav,
 	})
 }
 
@@ -65,7 +66,7 @@ func Viewblog(gc *gin.Context) {
 		gc.HTML(http.StatusOK, "blog.html", gin.H{
 			"blog":    bloginfo,
 			"blogset": cmd.GlobalBlogSeting,
-			"test":    `<script>alert(1)</script>`,
+			"navset":    cmd.GlobalNav,
 		})
 	}
 }

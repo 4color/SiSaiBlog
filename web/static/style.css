@@ -21,6 +21,8 @@
 .list .content {
     padding-top: 10px;
     font-size: 14px;
+    height: auto;
+    overflow: hidden;
 }
 
 .list .info {
@@ -46,6 +48,24 @@
 
 .indexcontent {
     min-height: 450px;
+}
+
+.contentintro {
+    clear: both;
+}
+
+.listsmallpic {
+    max-height: 200px;
+    max-width: 150px;
+    display: block;
+}
+
+@media screen and (min-width: 200px) and (max-width: 600px) {
+    .listsmallpic {
+        max-height: 100px;
+        max-width: 80px;
+    }
+
 }
 
 /*列表页结束*/

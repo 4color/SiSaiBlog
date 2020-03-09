@@ -19,6 +19,8 @@ type TBlog struct {
 	Intro       string `json:"intro" form:"intro"`
 	Views       int64  `json:"views" form:"views"`
 	Comments    string `json:"comments" form:"comments"`
+	Istop       int64  `json:"istop" form:"istop"`
+	Smallpic    string `json:"smallpic" form:"smallpic"`
 }
 
 //保存
@@ -28,9 +30,9 @@ func (p *TBlog) Save(data TBlog) (set TBlog, err1 error) {
 	//如果包含了无行数据的消息，则不为错误
 	if (data.Blogid == 0) {
 		//新增
-		count, err := SqlDB.Exec("insert into t_blogs (title,content,publishtime,urltitle,author,source,tags,views,comments,status,intro) "+
-			"values (:1,:2,:3,:4,:5,:6,:7,:8,:9,:10,:11)",
-			data.Title, data.Content, data.Publishtime, data.Urltitle, data.Author, data.Source, data.Tags, 0, 0, 1, data.Intro)
+		count, err := SqlDB.Exec("insert into t_blogs (title,content,publishtime,urltitle,author,source,tags,views,comments,status,intro,istop,smallpic) "+
+			"values (:1,:2,:3,:4,:5,:6,:7,:8,:9,:10,:11,:12,:13)",
+			data.Title, data.Content, data.Publishtime, data.Urltitle, data.Author, data.Source, data.Tags, 0, 0, 1, data.Intro, data.Istop, data.Smallpic)
 		if err != nil {
 			err1 = err
 			return
@@ -43,8 +45,8 @@ func (p *TBlog) Save(data TBlog) (set TBlog, err1 error) {
 	} else
 	{
 		//update
-		_, err := SqlDB.Exec("update t_blogs set title =:1, content =:2, publishtime =:3,urltitle=:4,author=:5,source=:6,tags=:7,intro=:8 where blogid=:9",
-			data.Title, data.Content, data.Publishtime, data.Urltitle, data.Author, data.Source, data.Tags, data.Intro, data.Blogid)
+		_, err := SqlDB.Exec("update t_blogs set title =:1, content =:2, publishtime =:3,urltitle=:4,author=:5,source=:6,tags=:7,intro=:8,istop=:9,smallpic=:10 where blogid=:11",
+			data.Title, data.Content, data.Publishtime, data.Urltitle, data.Author, data.Source, data.Tags, data.Intro, data.Istop, data.Smallpic, data.Blogid)
 		if err != nil {
 			err1 = err
 			return
@@ -57,8 +59,8 @@ func (p *TBlog) Save(data TBlog) (set TBlog, err1 error) {
 //读取一条
 func (p *TBlog) ReadOne(blogid string) (set TBlog, err error) {
 
-	row := SqlDB.QueryRow("SELECT blogid,title,content,publishtime,urltitle,author,source,tags,intro,views FROM t_blogs where blogid=:1", blogid)
-	err = row.Scan(&set.Blogid, &set.Title, &set.Content, &set.Publishtime, &set.Urltitle, &set.Author, &set.Source, &set.Tags, &set.Intro, &set.Views)
+	row := SqlDB.QueryRow("SELECT blogid,title,content,publishtime,urltitle,author,source,tags,intro,views,istop,smallpic FROM t_blogs where blogid=:1", blogid)
+	err = row.Scan(&set.Blogid, &set.Title, &set.Content, &set.Publishtime, &set.Urltitle, &set.Author, &set.Source, &set.Tags, &set.Intro, &set.Views, &set.Istop, &set.Smallpic)
 
 	//如果包含了无行数据的消息，则不为错误
 	if (err != nil && strings.Contains(err.Error(), "no rows in result set")) {
@@ -71,8 +73,8 @@ func (p *TBlog) ReadOne(blogid string) (set TBlog, err error) {
 func (p *TBlog) BlogList(keystring string, pageIndex int, pageSize int) (blogs []TBlog, err error) {
 
 	blogs = make([]TBlog, 0)
-	var sql = "SELECT blogid,title,publishtime,urltitle,author,source,tags,intro,comments,views " +
-		" FROM t_blogs t WHERE title like  '%" + keystring + "%' and status = 1  order by publishtime desc,blogid desc LIMIT {0},{1}"
+	var sql = "SELECT blogid,title,publishtime,urltitle,author,source,tags,intro,comments,views,istop,smallpic " +
+		" FROM t_blogs t WHERE title like  '%" + keystring + "%' and status = 1  order by istop desc, publishtime desc,blogid desc LIMIT {0},{1}"
 
 	istart := (pageIndex - 1) * pageSize
 
@@ -91,7 +93,7 @@ func (p *TBlog) BlogList(keystring string, pageIndex int, pageSize int) (blogs [
 
 	for rows.Next() {
 		var set TBlog
-		err = rows.Scan(&set.Blogid, &set.Title, &set.Publishtime, &set.Urltitle, &set.Author, &set.Source, &set.Tags, &set.Intro, &set.Comments, &set.Views)
+		err = rows.Scan(&set.Blogid, &set.Title, &set.Publishtime, &set.Urltitle, &set.Author, &set.Source, &set.Tags, &set.Intro, &set.Comments, &set.Views, &set.Istop, &set.Smallpic)
 		blogs = append(blogs, set)
 	}
 	if err = rows.Err(); err != nil {

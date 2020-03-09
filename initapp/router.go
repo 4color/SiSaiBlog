@@ -2,18 +2,19 @@ package initapp
 
 import (
 	"github.com/4color/SiSaiBlog/api"
+	"github.com/4color/SiSaiBlog/api/apinav"
 	"github.com/4color/SiSaiBlog/api/apisetting"
 	"github.com/4color/SiSaiBlog/api/blog"
 	"github.com/4color/SiSaiBlog/api/checkcode"
 	"github.com/4color/SiSaiBlog/api/login"
 	"github.com/4color/SiSaiBlog/views"
+	"github.com/4color/SiSaiBlog/views/adminview"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
 var R *gin.Engine
-
 
 func InitRouter() {
 	R = gin.Default()
@@ -28,27 +29,28 @@ func InitRouter() {
 	//})
 
 	R.Static("/static", "web/static")
-	R.LoadHTMLGlob("web/template/**")
+	R.LoadHTMLGlob("web/template/**/*")
 
 	R.GET("/", views.Index)
 	R.GET("/view/*blogurl", views.Viewblog)
-
+	R.GET("/login", views.Login)
+	R.GET("/logout", views.AdminLogout)
 
 	store := cookie.NewStore([]byte("secret"))
 	R.Use(sessions.Sessions("mysession", store))
 
-	authorized := R.Group("/", api.AuthSessionMiddle())
+	//管理员界面
+	authorized := R.Group("/admin", api.AuthSessionMiddle())
 	{
 
-		authorized.GET("/admin", views.Admin)
-		authorized.GET("/adminblog", views.AdminBlog)
-		authorized.GET("/admin/blog", views.AdminNew)
-		authorized.GET("/admin/reset", views.AdminReset)
+		authorized.GET("/", views.Admin)
+		authorized.GET("/list", views.AdminListBlog)
+		authorized.GET("/blogedit", views.AdminNew)
+		authorized.GET("/reset", views.AdminReset)
+		authorized.GET("/nav", adminview.List)
+		authorized.GET("/navedit", adminview.Edit)
+
 	}
-
-	R.GET("/login", views.Login)
-
-	R.GET("/admin/logout", views.AdminLogout)
 
 	v1 := R.Group("/api/v1", )
 	{
@@ -64,13 +66,26 @@ func InitRouter() {
 		v1.GET("/blogs/count", blog.BlogListCount)
 		v1.POST("/blogs/updateview", blog.BlogUpdateViews)
 
+		nav := v1.Group("/nav")
+		{
+			nav.GET("/list", apinav.List)
+			nav.GET("/count", apinav.ListCount)
+			nav.GET("/read/:id", apinav.Read)
+
+			authorizednav := nav.Group("/", api.AuthSessionMiddle())
+			{
+				authorizednav.POST("/save", apinav.Save)
+				authorizednav.POST("/delete", apinav.Delete)
+			}
+		}
+
 		authorizedapi := v1.Group("/", api.AuthSessionMiddle())
 		{
 			authorizedapi.POST("/blogs/delete", blog.BlogDelete)
 			authorizedapi.POST("/blog", blog.SaveBlog)
 			authorizedapi.POST("/blogsetting", apisetting.SaveSettingInfo)
 			authorizedapi.POST("/repwd", login.EditPwd)
-			authorizedapi.POST("/logout", login.Logout)
+
 		}
 
 	}
