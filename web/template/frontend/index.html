@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {[{template "headerbody" .}]}
+</head>
+<body>
+<div>
+
+    {[{template "header" .}]}
+
+    <div class="container grid-lg indexcontent">
+
+        <div class="columns">
+            <div class="column col-12">
+                <div class="list">
+
+                    {[{ range .blogs }]}
+                    <div class="title">
+                        {[{ if eq .Istop 1 }]}
+                        <i class="fa fa-coffee" aria-hidden="true"></i>
+                         {[{ end }]}
+                        <a href="view/{[{ .Blogid }]}-{[{ .Urltitle }]}"> {[{ .Title }]}</a>
+                    </div>
+                    <div class="content">
+                        <div>
+                            {[{ $pageTitle := .Smallpic }]}
+                            {[{ $pageTitleLen := len $pageTitle }]}
+                            {[{ if gt $pageTitleLen 4 }]}
+                            <img src="{[{ .Smallpic }]}" class="listsmallpic" align="left">
+                             {[{ end }]}
+                            {[{ .Intro }]}
+                        </div>
+
+                    </div>
+                    <div class="info">
+                        <div class="article_info"><span class="autor_name"> {[{ .Author }]}</span> <span class="time">发布于 {[{ .Publishtime }]}</span>
+                        </div>
+                        <div class="icon-icon-list"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;{[{ .Views }]}
+                            &nbsp;&nbsp;
+                            <i class="fa fa-comments" aria-hidden="true"></i>&nbsp;{[{ .Comments }]}
+                        </div>
+                    </div>
+                    {[{end}]}
+                </div>
+
+                <div class="pager">
+                    <div class="pageleft"><span class="label label-rounded label-primary"><a
+                                    href="?p={[{.preindex}]}">上一页</a></span></div>
+                    <div class="pageright"><span class="label label-rounded label-primary"><a
+                                    href="?p={[{.nextindex}]}">下一页</a></span></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    {[{template "footer" .}]}
+</div>
+</body>
+</html>

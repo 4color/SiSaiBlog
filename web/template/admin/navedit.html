@@ -1,0 +1,179 @@
+{[{ define "admin/navedit.html" }]}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {[{template "admin/headerbody" .}]}
+</head>
+<body>
+<div id="app">
+
+    {[{template "admin/header" .}]}
+
+    <div class="container grid-lg indexcontent" style="padding-bottom: 40px">
+
+        <div class="columns">
+            <div class="column col-3 col-md-1">{[{template "admin/menu" .}]}</div>
+            <div class="column col-9 col-md-12 adminblog">
+
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="input-navname">名称</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="text" id="input-navname" v-model="data.navname">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="input-link">网址</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="text" id="input-link" v-model="data.link">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="input-target">打开方式</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <select class="form-select" id="input-target" v-model="data.target">
+                                <option value="_blank">新窗口</option>
+                                <option value="">当前窗口</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="input-navorder">排序(越小越在前)</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="text" id="input-navorder" v-model="data.navorder">
+                        </div>
+                    </div>
+
+
+                    <div style="text-align: right">
+                        <input type="button" value="返回" class="btn btn-default"
+                               onclick="window.location.href='nav'">
+                        <input type="button" value="保存" class="btn btn-primary" @click="Save">
+                    </div>
+
+
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal active modal-sm" id="modal-id" v-if="message.length>0">
+        <a href="#close" class="modal-overlay" aria-label="Close" @click="Clear()"></a>
+        <div class="modal-container">
+            <div class="modal-header">
+                <a href="#close" class="btn btn-clear float-right" aria-label="Close" @click="Clear()"></a>
+                <div class="modal-title h5">消息提示</div>
+            </div>
+            <div class="modal-body">
+                <div class="content">
+                    {{message}}
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // 创建 Vue 实例，得到 ViewModel
+    var vm = new Vue({
+        el: '#app',
+        data() {
+            return {
+                data: {
+                    navid: 0,
+                    navcode: "",
+                    navname: "",
+                    link: "",
+                    target: "",
+                    navorder: 99
+                },
+                message: ""
+            }
+        },
+        mounted() {
+
+            this.Load();
+        },
+        methods: {
+            //获取
+            Load: function () {
+
+                var navid = {[{.navid}]};
+                var that = this;
+
+                var date = new Date();
+                var sss = date.toLocaleString();
+                //发送get请求
+                axios.get('../api/v1/nav/read/' + navid + "?rnd=" + sss).then(function (res) {
+                    if (res.data) {
+                        if (res.data.status == 200) {
+                            that.data = res.data.data;
+                        } else {
+                            that.message = res.data.message;
+                        }
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
+            },
+            //保存
+            Save: function () {
+
+                this.errormsg = "";
+                var that = this;
+
+                if (this.data.navname == "") {
+                    this.message = "请填写导航名称";
+                    return;
+                }
+
+                if (this.data.link == "") {
+                    this.message = "请填写导航链接";
+                    return;
+                }
+
+                this.data.navorder = parseInt(this.data.navorder);
+                //发送get请求
+                axios.post('../api/v1/nav/save', this.data).then(function (res) {
+                    if (res.data) {
+                        if (res.data.status == 200) {
+                            that.data.navid = res.data.data.navid;
+                            that.message = res.data.message;
+                        } else {
+                            that.message = res.data.message;
+                        }
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            Clear: function () {
+                this.message = ""
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
+
+{[{end}]}

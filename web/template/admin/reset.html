@@ -1,0 +1,148 @@
+{[{ define "admin/reset.html" }]}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {[{template "admin/headerbody" .}]}
+</head>
+<body>
+<div>
+
+    {[{template "admin/header" .}]}
+
+    <div id="app" class="container grid-lg indexcontent">
+
+        <form class="form-horizontal">
+            <div class="columns">
+                <div class="column col-3  col-md-3">{[{template "admin/menu" .}]}</div>
+                <div class="column col-9 col-md-9 col-sm-12  col-xs-12">
+
+                    <form>
+                        <div class="form-group">
+                            <label class="form-label" for="input-password">新密码</label>
+                            <input class="form-input" type="text" id="input-password" v-model="password">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="input-repassword">重复新密码</label>
+                            <input class="form-input" type="text" id="input-repassword" v-model="repassword">
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-2 col-sm-12">
+                                <label class="form-label" for="input-checkcode">验证码 *</label>
+                            </div>
+                            <div class="col-3 col-sm-12">
+                                <input class="form-input" type="text" id="input-checkcode" v-model="usercheckcode"
+                                       placeholder="验证码"> &nbsp;
+                            </div>
+
+                            <div class="col-1">
+
+                            </div>
+
+                            <div class="col-6 col-sm-12">
+                                <img :src="checkcode" width="100" height="35" @click="GetCheckcode()">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="button" value="保存" class="btn btn-primary" @click="Save()">
+                        </div>
+
+                        <div class="form-group">
+                            <span class="label label-success" v-if="message.length>0">{{message}}</span>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+
+    {[{template "admin/footer" .}]}
+</div>
+
+<script>
+    // 创建 Vue 实例，得到 ViewModel
+    var vm = new Vue({
+        el: '#app',
+        data() {
+            return {
+                checkcode: "",
+                captchaId: "",
+                //用户填的验证码
+                usercheckcode: "",
+                //密码
+                password: "",
+                repassword: "",
+                message: ""
+            }
+        },
+        mounted() {
+            this.GetCheckcode();
+        },
+        methods: {
+            //获取验证码
+            GetCheckcode: function () {
+                var that = this;
+                //发送get请求
+                axios.get('../api/v1/checkcode').then(function (res) {
+                    if (res.data) {
+                        if (res.data.status == 200) {
+                            that.captchaId = res.data.data.captchaId;
+                            that.checkcode = res.data.data.data;
+                        } else {
+
+                        }
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
+            },
+            //保存
+            Save: function () {
+
+                this.errormsg = "";
+                var that = this;
+                var postdata = {
+                    "repwd": this.repassword,
+                    "pwd": this.password,
+                    "VerifyValue": this.usercheckcode,
+                    "captchaId": this.captchaId
+                };
+
+                if (this.repassword == "" || this.password == "" || this.usercheckcode == "") {
+                    this.message = "请填写密码和验证码";
+                    return;
+                }
+
+                if (this.repassword != this.password) {
+                    this.message = "两次密码不相等";
+                    return;
+                }
+                //发送get请求
+                axios.post('../api/v1/repwd', postdata).then(function (res) {
+                    if (res.data) {
+                        if (res.data.status == 200) {
+                            that.message = res.data.message;
+                        } else {
+                            that.GetCheckcode();
+                            that.message = res.data.message;
+                        }
+                    }
+
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
+            }
+        }
+    });
+</script>
+</body>
+</html>
+
+{[{end}]}

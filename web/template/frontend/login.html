@@ -1,0 +1,153 @@
+{[{ define "login.html" }]}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {[{template "headerbody" .}]}
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script>
+
+        Vue.config.productionTip = false;
+    </script>
+    <script src="https://cdn.bootcss.com/axios/0.19.2/axios.js"></script>
+
+</head>
+<body>
+<div>
+
+    {[{template "header" .}]}
+    <div id="app" class="container grid-lg indexcontent">
+        <div class="listheader">
+            <p class="fl title"><i class="fa fa-comment-o"></i>&nbsp;博客管理
+            </p>
+        </div>
+        <form class="form-horizontal">
+            <div class="columns">
+                <div class="column col-12 col-md-12 col-sm-12  col-xs-12">
+
+                    <div class="form-group">
+                        <label class="form-label" for="input-username">用户名 *</label>
+                        <input class="form-input" type="text" id="input-username" v-model="username"
+                               placeholder="Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="input-password">密码 *</label>
+                        <input class="form-input" type="password" id="input-password" v-model="password"
+                               placeholder="password">
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-2 col-sm-12">
+                            <label class="form-label" for="input-checkcode">验证码 *</label>
+                        </div>
+                        <div class="col-3 col-sm-12">
+                            <input class="form-input" type="text" id="input-checkcode" v-model="usercheckcode"
+                                   placeholder="验证码"> &nbsp;
+                        </div>
+                        <div class="col-1 col-sm-1">
+
+                        </div>
+
+                        <div class="col-6 col-sm-12">
+                            <img :src="checkcode" width="100" height="35" @click="GetCheckcode()">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="button" value="登录" class="btn btn-primary" @click="Login()">
+                    </div>
+
+                    <div class="form-group">
+                        <span class="label label-error" v-if="errormsg.length>0">{{errormsg}}</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    {[{template "footer" .}]}
+</div>
+
+
+<script>
+    // 创建 Vue 实例，得到 ViewModel
+    var vm = new Vue({
+        el: '#app',
+        data() {
+            return {
+                checkcode: "",
+                captchaId: "",
+                //用户填的验证码
+                usercheckcode: "",
+                //用户名
+                username: "",
+                //密码
+                password: "",
+                errormsg: ""
+            }
+        },
+        mounted() {
+            this.GetCheckcode();
+        },
+        methods: {
+            //获取验证码
+            GetCheckcode: function () {
+                var that = this;
+                var date = new Date();
+                var sss = date.toLocaleString();
+                //发送get请求
+                axios.get('api/v1/checkcode?rnd=' + sss).then(function (res) {
+                    if (res.data) {
+                        if (res.data.status == 200) {
+                            that.captchaId = res.data.data.captchaId;
+                            that.checkcode = res.data.data.data;
+                        } else {
+
+                        }
+
+                    }
+
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
+            },
+            //登录
+            Login: function () {
+
+                this.errormsg = "";
+                var that = this;
+                var postdata = {
+                    "u": this.username,
+                    "p": this.password,
+                    "VerifyValue": this.usercheckcode,
+                    "captchaId": this.captchaId
+                };
+
+                if (this.username == "" || this.password == "" || this.usercheckcode == "") {
+                    this.errormsg = "请填写用户名、密码和验证码";
+                    return;
+                }
+                //发送get请求
+                axios.post('api/v1/login', postdata).then(function (res) {
+                    if (res.data) {
+                        if (res.data.status == 200) {
+                            this.window.location.href = "admin";
+                        } else {
+                            that.GetCheckcode();
+                            that.errormsg = res.data.message;
+                        }
+                    }
+
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
+            }
+        }
+    });
+</script>
+</body>
+</html>
+
+{[{end}]}
